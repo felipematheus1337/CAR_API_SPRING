@@ -2,6 +2,7 @@ package com.api.carapi.services.Impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.api.carapi.entities.Car;
 import com.api.carapi.entities.dto.CarDTO;
 import com.api.carapi.repositories.CarRepository;
+import com.api.carapi.services.exceptions.ObjectNotFoundException;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -88,11 +90,39 @@ class CarServiceImplTest {
      assertEquals(MODEL, response.getModel());
      assertEquals(COLOR,response.getColor());
 	 
-	 
-	 
-	 
-	 
-	 
+     
+	}
+	
+	@Test
+	void whenFindByIdThenThrowsObjectNotFoundException() {
+		when(repository.findById(anyLong())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
+		
+		try {
+			service.findById(2L);
+			
+		} catch (Exception ex) {
+			assertEquals(ObjectNotFoundException.class,ex.getClass());
+			assertEquals(OBJETO_NAO_ENCONTRADO,ex.getMessage());
+		}
+	}
+	
+	
+	@Test
+	void whenFindAllThenReturnAListOfCars() {
+		when(repository.findAll()).thenReturn(List.of(car));
+		
+		List<Car> carList = service.findAll();
+		
+		assertNotNull(carList);
+        assertEquals(1, carList.size());
+        assertEquals(Car.class, carList.get(INDEX).getClass());
+
+        assertEquals(MODEL,carList.get(0).getModel());
+        assertEquals(MAKE,carList.get(0).getMake());
+        assertEquals(YEAR,carList.get(0).getYear());
+        assertEquals(COLOR,carList.get(0).getColor());
+        
+		
 	}
 
 	
