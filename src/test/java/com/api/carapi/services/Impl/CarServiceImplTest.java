@@ -1,10 +1,9 @@
 package com.api.carapi.services.Impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
-import java.util.Optional;
-
+import com.api.carapi.entities.Car;
+import com.api.carapi.entities.dto.CarDTO;
+import com.api.carapi.repositories.CarRepository;
+import com.api.carapi.services.exceptions.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,15 +12,13 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.api.carapi.entities.Car;
-import com.api.carapi.entities.dto.CarDTO;
-import com.api.carapi.repositories.CarRepository;
-import com.api.carapi.services.exceptions.ObjectNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class CarServiceImplTest {
@@ -121,10 +118,41 @@ class CarServiceImplTest {
         assertEquals(MAKE,carList.get(0).getMake());
         assertEquals(YEAR,carList.get(0).getYear());
         assertEquals(COLOR,carList.get(0).getColor());
-        
-		
 	}
 
+	@Test
+	void whenCreateThenReturnSuccess() {
+		when(repository.save(any())).thenReturn(car);
+
+		Car response = service.create(carDTO);
+
+		assertNotNull(response);
+
+		assertEquals(MODEL,car.getModel());
+		assertEquals(MAKE,car.getMake());
+		assertEquals(YEAR,car.getYear());
+		assertEquals(COLOR,car.getColor());
+
+		assertEquals(response.getClass(),Car.class);
+
+
+
+	}
+
+
+
+	@Test
+	void whenUpdateThenReturnDataIntegrityViolationException() {
+         when(repository.findById(anyLong()))
+				 .thenThrow(new ObjectNotFoundException("Car not found to update!"));
+
+		 try {
+			service.update(carDTO);
+		 } catch(Exception e) {
+           assertEquals(ObjectNotFoundException.class, e.getClass());
+		   assertEquals("Car not found to update!",e.getMessage());
+		 }
+	}
 	
 
 }

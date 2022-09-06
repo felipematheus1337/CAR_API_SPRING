@@ -1,17 +1,16 @@
 	package com.api.carapi.services.Impl;
 
-import java.util.List;
-import java.util.Optional;
+	import com.api.carapi.entities.Car;
+	import com.api.carapi.entities.dto.CarDTO;
+	import com.api.carapi.repositories.CarRepository;
+	import com.api.carapi.services.CarService;
+	import com.api.carapi.services.exceptions.ObjectNotFoundException;
+	import org.modelmapper.ModelMapper;
+	import org.springframework.beans.factory.annotation.Autowired;
+	import org.springframework.stereotype.Service;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.api.carapi.entities.Car;
-import com.api.carapi.entities.dto.CarDTO;
-import com.api.carapi.repositories.CarRepository;
-import com.api.carapi.services.CarService;
-import com.api.carapi.services.exceptions.ObjectNotFoundException;
+	import java.util.List;
+	import java.util.Optional;
 
 @Service
 public class CarServiceImpl implements CarService{
@@ -45,13 +44,26 @@ public class CarServiceImpl implements CarService{
 
 	@Override
 	public Car update(CarDTO obj) {
-		 return repository.save(mapper.map(obj, Car.class));
+		     findById(obj.getId());
+			 return repository.save(mapper.map(obj, Car.class));
+
+
+
+
+
 	}
 
 	@Override
 	public void delete(Long id) {
 		repository.deleteById(id);
 		
+	}
+
+		public void IfCarExists(Long id) {
+		Optional<Car> car = repository.findById(id);
+		if(!car.isPresent()){
+			throw new ObjectNotFoundException("Car not found to update!");
+		}
 	}
 
 }
