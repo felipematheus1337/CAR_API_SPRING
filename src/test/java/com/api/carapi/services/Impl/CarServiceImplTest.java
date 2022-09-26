@@ -18,7 +18,7 @@ import java.util.Optional;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class CarServiceImplTest {
@@ -139,6 +139,20 @@ class CarServiceImplTest {
 
 	}
 
+	@Test
+	void whenUpdateThenReturnSucess() {
+		when(repository.findById(anyLong())).thenReturn(optionalCar);
+		when(repository.save(any())).thenReturn(car);
+
+		Car response = service.update(carDTO);
+
+		assertNotNull(response);
+		assertEquals(response.getClass(),Car.class);
+		assertEquals(response.getModel(),car.getModel());
+		assertEquals(response.getColor(),car.getColor());
+		assertEquals(response.getModel(),car.getModel());
+	}
+
 
 
 	@Test
@@ -153,6 +167,38 @@ class CarServiceImplTest {
 		   assertEquals("Car not found to update!",e.getMessage());
 		 }
 	}
+
+	@Test
+	void whenDeleteThenReturnOk() {
+      //when(repository.findById(anyLong())).thenReturn(optionalCar);
+	  doNothing().when(repository).deleteById(anyLong());
+	  service.delete(ID);
+      verify(repository,times(1)).deleteById(anyLong());
+
+	}
+
+	@Test
+	void whenIfCarExists() {
+		when(repository.findById(anyLong())).thenReturn(optionalCar);
+		service.IfCarExists(ID);
+		verify(repository,times(1)).findById(anyLong());
+
+	}
+
+	@Test
+	void whenIfCarDontExists() {
+		when(repository.findById(anyLong())).thenThrow(new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO));
+		try {
+			service.IfCarExists(ID);
+		} catch (Exception e) {
+			assertEquals(e.getMessage(),OBJETO_NAO_ENCONTRADO);
+			assertEquals(e.getClass(),ObjectNotFoundException.class);
+		}
+
+	}
+
+
+
 	
 
 }
