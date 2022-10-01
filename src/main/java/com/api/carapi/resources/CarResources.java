@@ -1,25 +1,17 @@
 package com.api.carapi.resources;
 
+import com.api.carapi.entities.dto.CarDTO;
+import com.api.carapi.services.CarService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import com.api.carapi.entities.Car;
-import com.api.carapi.entities.dto.CarDTO;
-import com.api.carapi.services.CarService;
 
 @RestController
 @RequestMapping(value = "/car")
@@ -29,9 +21,11 @@ public class CarResources {
 			
 			@Autowired
 			private ModelMapper mapper;
-	
-	        @Autowired
-	        private CarService service;
+
+
+	@Qualifier("carService")
+	@Autowired
+	private CarService service;
 	        
 	        	
 	        @GetMapping(value = ID)
