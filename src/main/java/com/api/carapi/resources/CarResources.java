@@ -4,12 +4,9 @@ import com.api.carapi.entities.dto.CarDTO;
 import com.api.carapi.services.CarService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +20,6 @@ public class CarResources {
 			private ModelMapper mapper;
 
 
-	@Qualifier("carService")
 	@Autowired
 	private CarService service;
 	        
@@ -41,9 +37,8 @@ public class CarResources {
 
 	        @PostMapping
 	        public ResponseEntity<CarDTO> create(@RequestBody CarDTO obj) {
-	            URI uri = ServletUriComponentsBuilder
-	                    .fromCurrentRequest().path(ID).buildAndExpand(service.create(obj).getId()).toUri();
-	            return ResponseEntity.created(uri).build();
+				service.create(obj);
+	            return ResponseEntity.ok().body(mapper.map(service.create(obj),CarDTO.class));
 	        }
 
 	        @PutMapping(value = ID)

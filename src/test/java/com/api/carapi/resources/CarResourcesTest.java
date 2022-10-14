@@ -11,6 +11,8 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.List;
 
@@ -50,7 +52,8 @@ class CarResourcesTest {
 
 
 
-
+    @Mock
+    private RequestAttributes attrs;
 
 
 
@@ -58,6 +61,7 @@ class CarResourcesTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         startCar();
+        RequestContextHolder.setRequestAttributes(attrs);
 
     }
 
@@ -109,8 +113,8 @@ class CarResourcesTest {
 
 
      assertNotNull(response);
-     assertEquals(response.getStatusCode(),HttpStatus.CREATED);
-     assertEquals(response.getStatusCodeValue(),201);
+     assertEquals(response.getStatusCode(),HttpStatus.OK);
+     assertEquals(response.getStatusCodeValue(),200);
      assertEquals(response.getClass(),ResponseEntity.class);
 
 
